@@ -7,6 +7,7 @@
 *.dll
 *.so
 *.dylib
+bb-tournament 
 
 # Test binary, built with `go test -c`
 *.test
