@@ -41,3 +41,60 @@ type gameinfo struct {
 
 var db *sqlhelper.DbConfig
 var GameInfo gameinfo
+
+type match2 struct {
+	ID      int
+	Robot1  int
+	Robot2  int
+	Win1    int
+	Win2    int
+	Tie1    int
+	Tie2    int
+	Lose1   int
+	Lose2   int
+	Points1 float64
+	Points2 float64
+}
+
+type match3 struct {
+	ID      int
+	Robot1  int
+	Robot2  int
+	Robot3  int
+	Win1    int
+	Win2    int
+	Win3    int
+	Tie1    int
+	Tie2    int
+	Tie3    int
+	Lose1   int
+	Lose2   int
+	Lose3   int
+	Points1 float64
+	Points2 float64
+	Points3 float64
+}
+
+type match4 struct {
+	ID      int
+	Robot1  int
+	Robot2  int
+	Robot3  int
+	Robot4  int
+	Win1    int
+	Win2    int
+	Win3    int
+	Win4    int
+	Tie1    int
+	Tie2    int
+	Tie3    int
+	Tie4    int
+	Lose1   int
+	Lose2   int
+	Lose3   int
+	Lose4   int
+	Points1 float64
+	Points2 float64
+	Points3 float64
+	Points4 float64
+}

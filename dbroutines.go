@@ -34,49 +34,16 @@ func CheckTables() bool {
 	return err == nil
 }
 
-// Create a new DB. Remove the old one if it exists.
-func CreateDB() error {
+func CreateTable(tn string, s interface{}) error {
 
-	DropTable(ROBOTTABLE)
-	// DropTable(GAMEDBTABLE)
-	// DropTable(BIRTHRECORDTABLE)
-	// DropTable(LOGGINGTABLE)
-	// DropTable(USERSTABLE)
-	// DropTable(SAVTOSAV)
+	var ss string
+	ss = "BEGIN;\n"
+	ss += CreateTableFromStruct(tn, s)
+	ss += "\n"
 
-	var s string
-	s = "BEGIN;\n"
-	s += CreateTableFromStruct(ROBOTTABLE, therobots{})
-	s += "\n"
-	//s = strings.ToLower(s)
-	//tx.MustExec(s)
-
-	// s += CreateTableFromStruct(GAMEDBTABLE, gamedb{})
-	// s += "\n"
-	//s = strings.ToLower(s)
-	//tx.MustExec(s)
-
-	// s += CreateTableFromStruct(BIRTHRECORDTABLE, birthrecord{})
-	// s += "\n"
-	//s = strings.ToLower(s)
-	//tx.MustExec(s)
-
-	// s += CreateTableFromStruct(LOGGINGTABLE, tlog{})
-	// s += "\n"
-	//s = strings.ToLower(s)
-	//tx.MustExec(s)
-
-	// s += CreateTableFromStruct(USERSTABLE, user{})
-	// s += "\n"
-	//s = strings.ToLower(s)
-	//tx.MustExec(s)
-
-	// s += CreateTableFromStruct(SAVTOSAV, savtosav{})
-	// s += "\n"
-
-	s += "COMMIT;\n"
-	fmt.Println(s)
-	statement, err := db.Db.Prepare(s)
+	ss += "COMMIT;\n"
+	// fmt.Println(s)
+	statement, err := db.Db.Prepare(ss)
 	if err != nil {
 		log.Println(err, s)
 		return err
@@ -87,6 +54,28 @@ func CreateDB() error {
 		log.Println(err)
 		return err
 	}
+
+	return nil
+}
+
+// Create a new DB. Remove the old one if it exists.
+func CreateDB() error {
+
+	DropTable(ROBOTTABLE)
+	DropTable("match2")
+	DropTable("match3")
+	DropTable("match4")
+	// DropTable(GAMEDBTABLE)
+	// DropTable(BIRTHRECORDTABLE)
+	// DropTable(LOGGINGTABLE)
+	// DropTable(USERSTABLE)
+	// DropTable(SAVTOSAV)
+
+	// Create the tables
+	CreateTable(ROBOTTABLE, therobots{})
+	CreateTable("match2", match2{})
+	CreateTable("match3", match3{})
+	CreateTable("match4", match4{})
 
 	// initGame()
 

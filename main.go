@@ -18,6 +18,7 @@ import (
 
 func main() {
 
+	// get the home directory of the user
 	home, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatal(err)
@@ -27,8 +28,19 @@ func main() {
 	flag.StringVar(&opts, "opts", home+"/basicbots/tournament.json", "Path and file for config options.")
 	flag.Parse()
 
+	lf := home + "/basicbots/tournament.log"
+	lfh, err := os.OpenFile(lf, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer lfh.Close()
+	log.SetOutput(lfh)
+	log.SetFlags(log.LstdFlags | log.Lshortfile | log.Lmicroseconds)
+
 	rawjson, err := os.ReadFile(opts)
 	if err != nil {
+		log.Println("Missing options file", opts)
+
 		o := gameinfo{}
 
 		err := os.MkdirAll(home+"/basicbots", 0755)
@@ -62,6 +74,7 @@ func main() {
 		}
 
 		fmt.Printf("Created %s\n", opts)
+		log.Println("Created", opts)
 		os.Exit(0)
 	}
 
