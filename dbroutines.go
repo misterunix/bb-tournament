@@ -3,14 +3,13 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
 	"reflect"
 	"strings"
 
 	_ "modernc.org/sqlite"
 )
 
-const ROBOTTABLE = "robots"
+//const ROBOTTABLE = "robots"
 
 // // Open the database. If it doesn't exist, create it. Return an error if there is a problem.
 // func OpenDB() error {
@@ -25,13 +24,16 @@ const ROBOTTABLE = "robots"
 // }
 
 // Check if tables exsist
-func CheckTables() bool {
+func CheckDB() error {
 	//var table string
 	//var err error
-	table := ROBOTTABLE
-	rr := db.Db.QueryRow("SELECT name FROM sqlite_master WHERE type='table' AND name='" + table + "';")
+	var table string
+	rr := db.Db.QueryRow("SELECT name FROM sqlite_master WHERE type='table' AND name='robots';")
 	err := rr.Scan(&table)
-	return err == nil
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func CreateTable(tn string, s interface{}) error {
@@ -61,7 +63,7 @@ func CreateTable(tn string, s interface{}) error {
 // Create a new DB. Remove the old one if it exists.
 func CreateDB() error {
 
-	DropTable(ROBOTTABLE)
+	DropTable("robots")
 	DropTable("match2")
 	DropTable("match3")
 	DropTable("match4")
@@ -72,15 +74,30 @@ func CreateDB() error {
 	// DropTable(SAVTOSAV)
 
 	// Create the tables
-	CreateTable(ROBOTTABLE, therobots{})
-	CreateTable("match2", match2{})
-	CreateTable("match3", match3{})
-	CreateTable("match4", match4{})
+	err := CreateTable("robots", therobots{})
+	if err != nil {
+		return err
+	}
+
+	err = CreateTable("match2", match2{})
+	if err != nil {
+		return err
+	}
+
+	err = CreateTable("match3", match3{})
+	if err != nil {
+		return err
+	}
+
+	err = CreateTable("match4", match4{})
+	if err != nil {
+		return err
+	}
 
 	// initGame()
 
 	fmt.Println("Created a new database.")
-	os.Exit(0)
+
 	return nil
 }
 
@@ -176,7 +193,7 @@ func InsertIntoTable(table string, s interface{}) string {
 		switch varType.Kind() {
 		case reflect.Int:
 			if varName == "ID" {
-				middlesql2 += fmt.Sprintf("NULL") + ","
+				middlesql2 += "NULL," //fmt.Sprintf("NULL") + ","
 			} else {
 				middlesql2 += fmt.Sprintf("%d", varValue.(int)) + ","
 			}

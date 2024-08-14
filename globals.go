@@ -20,6 +20,7 @@ type gameinfo struct {
 	BBprogram  string `json:"bbprogram"`  // full path to the basicbots program
 	Robotspath string `json:"robotspath"` // full path to the robots directory
 	DBpath     string `json:"dbpath"`     // full path to the database
+	Userspath  string `json:"userspath"`  // full path to the users directory
 }
 
 // type Challenge struct {
@@ -40,6 +41,7 @@ type gameinfo struct {
 // }
 
 var db *sqlhelper.DbConfig
+
 var GameInfo gameinfo
 
 type match2 struct {

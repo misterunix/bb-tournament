@@ -19,16 +19,18 @@ import (
 func main() {
 
 	// get the home directory of the user
-	home, err := os.UserHomeDir()
+	var hd string
+	hd, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatal(err)
 	}
+	GameInfo.Userspath = hd // this is odd, couldnt set it directly.
 
 	var opts string
-	flag.StringVar(&opts, "opts", home+"/basicbots/tournament.json", "Path and file for config options.")
+	flag.StringVar(&opts, "opts", GameInfo.Userspath+"/basicbots/tournament.json", "Path and file for config options.")
 	flag.Parse()
 
-	lf := home + "/basicbots/tournament.log"
+	lf := GameInfo.Userspath + "/basicbots/tournament.log"
 	lfh, err := os.OpenFile(lf, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatal(err)
@@ -43,23 +45,23 @@ func main() {
 
 		o := gameinfo{}
 
-		err := os.MkdirAll(home+"/basicbots", 0755)
+		err := os.MkdirAll(GameInfo.Userspath+"/basicbots", 0755)
 		if err != nil {
 			log.Fatal(err)
 		}
-		err = os.MkdirAll(home+"/basicbots/robots", 0755)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		err = os.MkdirAll(home+"/basicbots/db", 0755)
+		err = os.MkdirAll(GameInfo.Userspath+"/basicbots/robots", 0755)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		o.BBprogram = home + "/basicbots/bin/basicbots-linux_amd64"
-		o.Robotspath = home + "/basicbots/robots"
-		o.DBpath = home + "/basicbots/db"
+		err = os.MkdirAll(GameInfo.Userspath+"/basicbots/db", 0755)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		o.BBprogram = GameInfo.Userspath + "/basicbots/bin/basicbots-linux_amd64"
+		o.Robotspath = GameInfo.Userspath + "/basicbots/robots"
+		o.DBpath = GameInfo.Userspath + "/basicbots/db"
 
 		j, err := json.MarshalIndent(o, " ", "  ")
 		if err != nil {
@@ -92,12 +94,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Create the table if it doesn't exist
-	p := CheckTables()
-	if !p {
-		err = CreateDB()
-		if err != nil {
-			log.Fatal(err)
+	err = CheckDB()
+	if err != nil {
+		err2 := CreateDB()
+		if err2 != nil {
+			log.Fatal(err2)
 		}
 	}
 
