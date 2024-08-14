@@ -17,10 +17,12 @@ type therobots struct {
 }
 
 type gameinfo struct {
-	BBprogram  string `json:"bbprogram"`  // full path to the basicbots program
-	Robotspath string `json:"robotspath"` // full path to the robots directory
-	DBpath     string `json:"dbpath"`     // full path to the database
-	Userspath  string `json:"userspath"`  // full path to the users directory
+	BBprogram    string      `json:"bbprogram"`  // full path to the basicbots program
+	Robotspath   string      `json:"robotspath"` // full path to the robots directory
+	DBpath       string      `json:"dbpath"`     // full path to the database
+	Userspath    string      `json:"userspath"`  // full path to the users directory
+	NumOfBots    int         `json:"numofbots"`  // number of bots
+	RobotStorage []therobots `json:"robotstorage"`
 }
 
 // type Challenge struct {
