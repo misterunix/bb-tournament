@@ -62,6 +62,7 @@ func main() {
 		o.BBprogram = GameInfo.Userspath + "/basicbots/bin/basicbots-linux_amd64"
 		o.Robotspath = GameInfo.Userspath + "/basicbots/robots"
 		o.DBpath = GameInfo.Userspath + "/basicbots/db"
+		o.Userspath = GameInfo.Userspath
 
 		j, err := json.MarshalIndent(o, " ", "  ")
 		if err != nil {
