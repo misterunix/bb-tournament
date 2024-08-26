@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 )
 
@@ -14,14 +15,14 @@ import (
 func Match2() {
 	// Tournament 2x2
 
-	match := make([]thematch, 0)
+	match := make([]match2, 0)
 
 	for i := 0; i < GameInfo.NumOfBots-1; i++ {
 		for j := i + 1; j < GameInfo.NumOfBots; j++ {
 
-			m := thematch{}
-			m.RobotFilename = append(m.RobotFilename, GameInfo.RobotStorage[i].Filename)
-			m.RobotFilename = append(m.RobotFilename, GameInfo.RobotStorage[j].Filename)
+			m := match2{}
+			m.Robot1 = GameInfo.RobotStorage[i].ID
+			m.Robot2 = GameInfo.RobotStorage[j].ID
 
 			buf := new(bytes.Buffer) // buffer to capture the output of the basicbots program
 
@@ -29,6 +30,9 @@ func Match2() {
 			fmt.Printf("Tournament: %s vs %s\n",
 				GameInfo.RobotStorage[i].Filename,
 				GameInfo.RobotStorage[j].Filename)
+
+			m.Robot1 = GameInfo.RobotStorage[i].Filename
+			m.Robot2 = GameInfo.RobotStorage[j].Filename
 
 			matches := "17" // number of matches to run
 			cmd := exec.Command(GameInfo.BBprogram, "-tt", "-m", matches,
@@ -44,7 +48,7 @@ func Match2() {
 			}
 			lines := strings.Split(buf.String(), "\n")
 
-			for _, line := range lines {
+			for pid, line := range lines {
 
 				fmt.Println(line)
 				if len(line) == 0 {
@@ -66,6 +70,19 @@ func Match2() {
 				if err != nil {
 					fmt.Fprintln(os.Stderr, sqlstring)
 					log.Fatal(err)
+				}
+
+				switch pid {
+				case 0:
+					m.Win1, _ = strconv.Atoi(w)
+					m.Tie1, _ = strconv.Atoi(t)
+					m.Lose1, _ = strconv.Atoi(l)
+					m.Points1, _ = strconv.ParseFloat(p, 64)
+				case 1:
+					m.Win2, _ = strconv.Atoi(w)
+					m.Tie2, _ = strconv.Atoi(t)
+					m.Lose2, _ = strconv.Atoi(l)
+					m.Points2, _ = strconv.ParseFloat(p, 64)
 				}
 
 				//parts2 := strings.Split(parts1[1], " ")
@@ -92,6 +109,14 @@ func Match2() {
 			}
 
 			fmt.Println(buf.String())
+
+			sqlstring := "UPDATE match2 SET Robot1='" + m.Robot1 + "', Robot2='" + m.Robot2 + "', Win1=" + strconv.Itoa(m.Win1) + ", Win2=" + strconv.Itoa(m.Win2) + ", Tie1=" + strconv.Itoa(m.Tie1) + ", Tie2=" + strconv.Itoa(m.Tie2) + ", Lose1=" + strconv.Itoa(m.Lose1) + ", Lose2=" + strconv.Itoa(m.Lose2) + ", Points1=" + strconv.FormatFloat(m.Points1, 'f', -1, 64) + ", Points2=" + strconv.FormatFloat(m.Points2, 'f', -1, 64) + " WHERE Robot1='" + m.Robot1 + "' AND Robot2='" + m.Robot2 + "';"
+			_, err := db.Db.Exec(sqlstring)
+			if err != nil {
+				fmt.Fprintln(os.Stderr, sqlstring)
+				log.Fatal(err)
+			}
+
 		}
 	}
 

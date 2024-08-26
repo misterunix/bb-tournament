@@ -56,6 +56,20 @@ type thematch struct {
 	Points        []float64 `json:"points"`
 }
 
+type match2 struct {
+	ID      int
+	Robot1  string
+	Robot2  string
+	Win1    int
+	Win2    int
+	Tie1    int
+	Tie2    int
+	Lose1   int
+	Lose2   int
+	Points1 float64
+	Points2 float64
+}
+
 type match3 struct {
 	ID      int
 	Robot1  int
