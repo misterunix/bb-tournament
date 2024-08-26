@@ -10,13 +10,27 @@ import (
 )
 
 // run a one on one match
+// start with the lowest scored robot and work up
 func Match2() {
 	// Tournament 2x2
+
+	match := make([]thematch, 0)
+
 	for i := 0; i < GameInfo.NumOfBots-1; i++ {
 		for j := i + 1; j < GameInfo.NumOfBots; j++ {
-			buf := new(bytes.Buffer)
-			fmt.Printf("Tournament: %s vs %s\n", GameInfo.RobotStorage[i].Filename, GameInfo.RobotStorage[j].Filename)
-			matches := "17"
+
+			m := thematch{}
+			m.RobotFilename = append(m.RobotFilename, GameInfo.RobotStorage[i].Filename)
+			m.RobotFilename = append(m.RobotFilename, GameInfo.RobotStorage[j].Filename)
+
+			buf := new(bytes.Buffer) // buffer to capture the output of the basicbots program
+
+			// print the match
+			fmt.Printf("Tournament: %s vs %s\n",
+				GameInfo.RobotStorage[i].Filename,
+				GameInfo.RobotStorage[j].Filename)
+
+			matches := "17" // number of matches to run
 			cmd := exec.Command(GameInfo.BBprogram, "-tt", "-m", matches,
 				GameInfo.Robotspath+"/"+GameInfo.RobotStorage[i].Filename,
 				GameInfo.Robotspath+"/"+GameInfo.RobotStorage[j].Filename)
@@ -29,7 +43,9 @@ func Match2() {
 				log.Fatal(err)
 			}
 			lines := strings.Split(buf.String(), "\n")
+
 			for _, line := range lines {
+
 				fmt.Println(line)
 				if len(line) == 0 {
 					continue
@@ -44,6 +60,7 @@ func Match2() {
 				l := parts1[3]
 				p := parts1[4]
 
+				// this update just robots table
 				sqlstring := "UPDATE robots SET count = count + " + matches + ", win = win + " + w + ", tie = tie + " + t + ", loss = loss + " + l + ", points = points + " + p + " WHERE filename = '" + filename + "';"
 				_, err := db.Db.Exec(sqlstring)
 				if err != nil {
@@ -77,4 +94,5 @@ func Match2() {
 			fmt.Println(buf.String())
 		}
 	}
+
 }

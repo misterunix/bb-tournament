@@ -46,18 +46,14 @@ var db *sqlhelper.DbConfig
 
 var GameInfo gameinfo
 
-type match2 struct {
-	ID      int
-	Robot1  int
-	Robot2  int
-	Win1    int
-	Win2    int
-	Tie1    int
-	Tie2    int
-	Lose1   int
-	Lose2   int
-	Points1 float64
-	Points2 float64
+type thematch struct {
+	ID            int       `json:"id"`
+	RobotsID      []int     `json:"robotsid"`
+	RobotFilename []string  `json:"robotfilename"`
+	Win           []int     `json:"win"`
+	Tie           []int     `json:"tie"`
+	Lose          []int     `json:"lose"`
+	Points        []float64 `json:"points"`
 }
 
 type match3 struct {
